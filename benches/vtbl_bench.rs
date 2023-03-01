@@ -1,12 +1,10 @@
-use std::vec;
-
+use clean_code::shapes::ShapeType;
 use clean_code::shapes::{
     total_area_rust, total_area_switch, total_area_union, total_area_vtbl, Circle, Rectangle,
     Shape, ShapeRustEnum, ShapeUnion, Square, Triangle,
 };
-use criterion::{criterion_group, criterion_main, Criterion};
 
-use clean_code::shapes::ShapeType;
+use criterion::{criterion_group, criterion_main, Criterion};
 
 fn criterion_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("reduced-sample-size");
@@ -63,7 +61,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         b.iter(|| total_area_switch(&shapes_union))
     });
 
-    group.bench_function("GS with switch and coefficient array", |b| {
+    group.bench_function("GS with switch and lookup table", |b| {
         b.iter(|| total_area_union(&shapes_union))
     });
 

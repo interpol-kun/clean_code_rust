@@ -10,7 +10,7 @@ GS (General Struct)
 |------------------------------------------------	|-----------	|--------------------------	|
 | Dynamic dispatch                               	| 632.34 µs 	| 100%                     	|
 | GS with enum field + match                     	| 379.52 µs 	| 60.01%                   	|
-| GS with enum field + match + coefficient array 	| 340.19 µs 	| 53.79%                   	|
+| GS with enum field + match + lookup table     	| 340.19 µs 	| 53.79%                   	|
 | Rust enums                                        | 366.25 µs 	| 57.91%                   	|
 
 **It is worth noting that both trait methods and pure methods have the same performance whith the static dispatch, so I deleted one of the benchmarks**

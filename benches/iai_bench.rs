@@ -1,10 +1,9 @@
-use iai::black_box;
-
 use clean_code::shapes::{
     total_area_rust, total_area_switch, total_area_vtbl, Circle, Rectangle, Shape, ShapeRustEnum,
     ShapeUnion, Square, Triangle,
 };
 use clean_code::shapes::{total_area_union, ShapeType};
+use iai::black_box;
 
 fn iai_vtbl() -> f32 {
     let circle = Circle::new(3.0);
@@ -33,7 +32,7 @@ fn iai_area_switch() -> f32 {
     total_area_switch(&black_box::<Vec<&ShapeUnion>>(shapes_union))
 }
 
-fn iai_switch_and_coefficient_array() -> f32 {
+fn iai_switch_and_lookup_table() -> f32 {
     let circle_union = ShapeUnion::new(ShapeType::Circle, 3.0, 3.0);
     let square_union = ShapeUnion::new(ShapeType::Square, 3.0, 2.0);
     let rectangle_union = ShapeUnion::new(ShapeType::Rectangle, 3.0, 5.0);
@@ -62,6 +61,6 @@ fn iai_rust_enums() -> f32 {
 iai::main!(
     iai_vtbl,
     iai_area_switch,
-    iai_switch_and_coefficient_array,
+    iai_switch_and_lookup_table,
     iai_rust_enums
 );

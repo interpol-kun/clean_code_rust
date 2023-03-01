@@ -1,42 +1,3 @@
-#[derive(Copy, Clone)]
-pub enum ShapeType {
-    Square,
-    Rectangle,
-    Triangle,
-    Circle,
-    Count,
-}
-
-pub enum ShapeRust {
-    Square(SquareRust),
-    Rectangle(RectangleRust),
-    Triangle(TriangleRust),
-    Circle(CircleRust),
-}
-
-pub enum ShapeRustTrait {
-    Square(Square),
-    Rectangle(Rectangle),
-    Triangle(Triangle),
-    Circle(Circle),
-}
-
-pub struct ShapeUnion {
-    shape_type: ShapeType,
-    width: f32,
-    height: f32,
-}
-
-impl ShapeUnion {
-    pub fn new(shape_type: ShapeType, width: f32, height: f32) -> ShapeUnion {
-        ShapeUnion {
-            shape_type,
-            width,
-            height,
-        }
-    }
-}
-
 pub fn total_area_union(shape_union: &[&ShapeUnion]) -> f32 {
     let mut accum: f32 = 0.0;
 
@@ -113,6 +74,45 @@ pub fn total_area_rust_trait(shapes: &[&ShapeRustTrait]) -> f32 {
     }
 
     accum
+}
+
+#[derive(Copy, Clone)]
+pub enum ShapeType {
+    Square,
+    Rectangle,
+    Triangle,
+    Circle,
+    Count,
+}
+
+pub enum ShapeRust {
+    Square(SquareRust),
+    Rectangle(RectangleRust),
+    Triangle(TriangleRust),
+    Circle(CircleRust),
+}
+
+pub enum ShapeRustTrait {
+    Square(Square),
+    Rectangle(Rectangle),
+    Triangle(Triangle),
+    Circle(Circle),
+}
+
+pub struct ShapeUnion {
+    shape_type: ShapeType,
+    width: f32,
+    height: f32,
+}
+
+impl ShapeUnion {
+    pub fn new(shape_type: ShapeType, width: f32, height: f32) -> ShapeUnion {
+        ShapeUnion {
+            shape_type,
+            width,
+            height,
+        }
+    }
 }
 
 pub trait Shape {

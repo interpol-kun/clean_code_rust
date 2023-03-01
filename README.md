@@ -4,6 +4,8 @@ Although the first benchmark with VTBL is unstable (somehow I managed to get to 
 
 GS (General Struct)
 
+**Benchmark uses the array of 100 000 structs in a for-loop**
+
 | Method                                         	| Time      	| Difference from baseline 	|
 |------------------------------------------------	|-----------	|--------------------------	|
 | Dynamic dispatch                               	| 2.8753 ms 	| 100%                     	|

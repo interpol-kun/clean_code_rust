@@ -185,6 +185,7 @@ impl Shape for Circle {
     }
 }
 
+//Structs for enums
 pub struct SquareRust {
     side: f32,
 }

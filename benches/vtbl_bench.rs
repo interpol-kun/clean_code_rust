@@ -69,22 +69,24 @@ fn criterion_benchmark(c: &mut Criterion) {
         shapes_rust_trait.push(&tt_rust);
     }
 
-    group.bench_function("Area with VTBL", |b| b.iter(|| total_area_vtbl(&shapes)));
+    group.bench_function("Dynamic dispatch (VTBL)", |b| {
+        b.iter(|| total_area_vtbl(&shapes))
+    });
 
-    group.bench_function("Area with Switch", |b| {
+    group.bench_function("GS with switch", |b| {
         b.iter(|| total_area_switch(&shapes_union))
     });
 
-    group.bench_function("Area with array", |b| {
+    group.bench_function("GS with switch and coefficient array", |b| {
         b.iter(|| total_area_union(&shapes_union))
     });
 
     group.bench_function(
-        "Area with Rust Unions (implemented method from trait w direct call)",
+        "Rust enums (implemented method from trait w direct call)",
         |b| b.iter(|| total_area_rust_trait(&shapes_rust_trait)),
     );
 
-    group.bench_function("Area with Rust Unions (struct method w direct call)", |b| {
+    group.bench_function("Rust enums (struct method w direct call)", |b| {
         b.iter(|| total_area_rust(&shapes_rust))
     });
 }

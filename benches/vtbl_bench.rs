@@ -1,9 +1,8 @@
 use std::vec;
 
 use clean_code::shapes::{
-    total_area_rust, total_area_rust_trait, total_area_switch, total_area_union, total_area_vtbl,
-    Circle, CircleRust, Rectangle, RectangleRust, Shape, ShapeRust, ShapeRustTrait, ShapeUnion,
-    Square, SquareRust, Triangle, TriangleRust,
+    total_area_rust, total_area_switch, total_area_union, total_area_vtbl, Circle, Rectangle,
+    Shape, ShapeRustEnum, ShapeUnion, Square, Triangle,
 };
 use criterion::{criterion_group, criterion_main, Criterion};
 
@@ -43,30 +42,17 @@ fn criterion_benchmark(c: &mut Criterion) {
         shapes_union.push(&square_union);
     }
 
-    let c_rust = ShapeRust::Circle(CircleRust::new(3.0));
-    let s_rust = ShapeRust::Square(SquareRust::new(4.0));
-    let r_rust = ShapeRust::Rectangle(RectangleRust::new(2.0, 4.0));
-    let t_rust = ShapeRust::Triangle(TriangleRust::new(5.0, 3.0));
-    let mut shapes_rust: Vec<&ShapeRust> = Vec::new();
+    let cc_rust = ShapeRustEnum::Circle(Circle::new(3.0));
+    let ss_rust = ShapeRustEnum::Square(Square::new(4.0));
+    let rr_rust = ShapeRustEnum::Rectangle(Rectangle::new(2.0, 4.0));
+    let tt_rust = ShapeRustEnum::Triangle(Triangle::new(5.0, 3.0));
+    let mut shapes_rust_enum: Vec<&ShapeRustEnum> = Vec::new();
 
     for _ in 0..ARRAY_SIZE {
-        shapes_rust.push(&c_rust);
-        shapes_rust.push(&s_rust);
-        shapes_rust.push(&r_rust);
-        shapes_rust.push(&t_rust);
-    }
-
-    let cc_rust = ShapeRustTrait::Circle(Circle::new(3.0));
-    let ss_rust = ShapeRustTrait::Square(Square::new(4.0));
-    let rr_rust = ShapeRustTrait::Rectangle(Rectangle::new(2.0, 4.0));
-    let tt_rust = ShapeRustTrait::Triangle(Triangle::new(5.0, 3.0));
-    let mut shapes_rust_trait: Vec<&ShapeRustTrait> = Vec::new();
-
-    for _ in 0..ARRAY_SIZE {
-        shapes_rust_trait.push(&cc_rust);
-        shapes_rust_trait.push(&ss_rust);
-        shapes_rust_trait.push(&rr_rust);
-        shapes_rust_trait.push(&tt_rust);
+        shapes_rust_enum.push(&cc_rust);
+        shapes_rust_enum.push(&ss_rust);
+        shapes_rust_enum.push(&rr_rust);
+        shapes_rust_enum.push(&tt_rust);
     }
 
     group.bench_function("Dynamic dispatch (VTBL)", |b| {
@@ -81,13 +67,8 @@ fn criterion_benchmark(c: &mut Criterion) {
         b.iter(|| total_area_union(&shapes_union))
     });
 
-    group.bench_function(
-        "Rust enums (implemented method from trait w direct call)",
-        |b| b.iter(|| total_area_rust_trait(&shapes_rust_trait)),
-    );
-
-    group.bench_function("Rust enums (struct method w direct call)", |b| {
-        b.iter(|| total_area_rust(&shapes_rust))
+    group.bench_function("Rust enums", |b| {
+        b.iter(|| total_area_rust(&shapes_rust_enum))
     });
 }
 

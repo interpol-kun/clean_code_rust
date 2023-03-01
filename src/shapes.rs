@@ -46,30 +46,15 @@ where
     accum
 }
 
-pub fn total_area_rust(shapes: &[&ShapeRust]) -> f32 {
+pub fn total_area_rust(shapes: &[&ShapeRustEnum]) -> f32 {
     let mut accum: f32 = 0.0;
 
     for shape in shapes {
         accum += match shape {
-            ShapeRust::Square(square) => square.get_area(),
-            ShapeRust::Rectangle(rectangle) => rectangle.get_area(),
-            ShapeRust::Triangle(triangle) => triangle.get_area(),
-            ShapeRust::Circle(circle) => circle.get_area(),
-        }
-    }
-
-    accum
-}
-
-pub fn total_area_rust_trait(shapes: &[&ShapeRustTrait]) -> f32 {
-    let mut accum: f32 = 0.0;
-
-    for shape in shapes {
-        accum += match shape {
-            ShapeRustTrait::Square(square) => square.get_area(),
-            ShapeRustTrait::Rectangle(rectangle) => rectangle.get_area(),
-            ShapeRustTrait::Triangle(triangle) => triangle.get_area(),
-            ShapeRustTrait::Circle(circle) => circle.get_area(),
+            ShapeRustEnum::Square(square) => square.get_area(),
+            ShapeRustEnum::Rectangle(rectangle) => rectangle.get_area(),
+            ShapeRustEnum::Triangle(triangle) => triangle.get_area(),
+            ShapeRustEnum::Circle(circle) => circle.get_area(),
         }
     }
 
@@ -85,14 +70,7 @@ pub enum ShapeType {
     Count,
 }
 
-pub enum ShapeRust {
-    Square(SquareRust),
-    Rectangle(RectangleRust),
-    Triangle(TriangleRust),
-    Circle(CircleRust),
-}
-
-pub enum ShapeRustTrait {
+pub enum ShapeRustEnum {
     Square(Square),
     Rectangle(Rectangle),
     Triangle(Triangle),
@@ -181,63 +159,6 @@ impl Circle {
 
 impl Shape for Circle {
     fn get_area(&self) -> f32 {
-        std::f32::consts::PI * self.radius * self.radius
-    }
-}
-
-//Structs for enums
-pub struct SquareRust {
-    side: f32,
-}
-
-impl SquareRust {
-    pub fn new(side: f32) -> SquareRust {
-        SquareRust { side }
-    }
-
-    pub fn get_area(&self) -> f32 {
-        self.side * self.side
-    }
-}
-
-pub struct RectangleRust {
-    width: f32,
-    height: f32,
-}
-
-impl RectangleRust {
-    pub fn new(width: f32, height: f32) -> RectangleRust {
-        RectangleRust { width, height }
-    }
-    pub fn get_area(&self) -> f32 {
-        self.height * self.width
-    }
-}
-
-pub struct TriangleRust {
-    base: f32,
-    height: f32,
-}
-
-impl TriangleRust {
-    pub fn new(base: f32, height: f32) -> TriangleRust {
-        TriangleRust { base, height }
-    }
-
-    pub fn get_area(&self) -> f32 {
-        0.5f32 * self.base * self.height
-    }
-}
-
-pub struct CircleRust {
-    radius: f32,
-}
-
-impl CircleRust {
-    pub fn new(radius: f32) -> CircleRust {
-        CircleRust { radius }
-    }
-    pub fn get_area(&self) -> f32 {
         std::f32::consts::PI * self.radius * self.radius
     }
 }

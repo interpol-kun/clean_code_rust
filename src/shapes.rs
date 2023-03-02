@@ -47,14 +47,7 @@ where
 pub fn total_area_rust(shapes: &[&ShapeRustEnum]) -> f32 {
     let mut accum: f32 = 0.0;
 
-    shapes.iter().for_each(|shape| {
-        accum += match shape {
-            ShapeRustEnum::Square(square) => square.get_area(),
-            ShapeRustEnum::Rectangle(rectangle) => rectangle.get_area(),
-            ShapeRustEnum::Triangle(triangle) => triangle.get_area(),
-            ShapeRustEnum::Circle(circle) => circle.get_area(),
-        }
-    });
+    shapes.iter().for_each(|shape| accum += shape.get_area());
 
     accum
 }
@@ -93,6 +86,17 @@ impl ShapeUnion {
 
 pub trait Shape {
     fn get_area(&self) -> f32;
+}
+
+impl Shape for ShapeRustEnum {
+    fn get_area(&self) -> f32 {
+        match self {
+            ShapeRustEnum::Square(square) => square.get_area(),
+            ShapeRustEnum::Rectangle(rectangle) => rectangle.get_area(),
+            ShapeRustEnum::Triangle(triangle) => triangle.get_area(),
+            ShapeRustEnum::Circle(circle) => circle.get_area(),
+        }
+    }
 }
 
 pub struct Square {

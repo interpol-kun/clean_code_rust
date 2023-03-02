@@ -1,9 +1,9 @@
 pub fn total_area_union(shape_union: &[&ShapeUnion]) -> f32 {
     let mut accum: f32 = 0.0;
 
-    for shape in shape_union {
-        accum += get_area_union(shape);
-    }
+    shape_union
+        .iter()
+        .for_each(|shape| accum += get_area_union(shape));
 
     accum
 }
@@ -11,9 +11,9 @@ pub fn total_area_union(shape_union: &[&ShapeUnion]) -> f32 {
 pub fn total_area_switch(shape_union: &[&ShapeUnion]) -> f32 {
     let mut accum: f32 = 0.0;
 
-    for shape in shape_union {
-        accum += get_area_switch(shape);
-    }
+    shape_union
+        .iter()
+        .for_each(|shape| accum += get_area_switch(shape));
 
     accum
 }
@@ -39,9 +39,7 @@ where
 {
     let mut accum: f32 = 0.0;
 
-    for shape in shapes {
-        accum += shape.get_area();
-    }
+    shapes.iter().for_each(|shape| accum += shape.get_area());
 
     accum
 }
@@ -49,14 +47,14 @@ where
 pub fn total_area_rust(shapes: &[&ShapeRustEnum]) -> f32 {
     let mut accum: f32 = 0.0;
 
-    for shape in shapes {
+    shapes.iter().for_each(|shape| {
         accum += match shape {
             ShapeRustEnum::Square(square) => square.get_area(),
             ShapeRustEnum::Rectangle(rectangle) => rectangle.get_area(),
             ShapeRustEnum::Triangle(triangle) => triangle.get_area(),
             ShapeRustEnum::Circle(circle) => circle.get_area(),
         }
-    }
+    });
 
     accum
 }

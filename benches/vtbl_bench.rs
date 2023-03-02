@@ -4,7 +4,7 @@ use clean_code::shapes::{
     Shape, ShapeRustEnum, ShapeUnion, Square, Triangle,
 };
 
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 fn criterion_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("reduced-sample-size");
@@ -54,19 +54,19 @@ fn criterion_benchmark(c: &mut Criterion) {
     }
 
     group.bench_function("Dynamic dispatch (VTBL)", |b| {
-        b.iter(|| total_area_vtbl(&shapes))
+        b.iter(|| total_area_vtbl(black_box(&shapes)))
     });
 
     group.bench_function("GS with switch", |b| {
-        b.iter(|| total_area_switch(&shapes_union))
+        b.iter(|| total_area_switch(black_box(&shapes_union)))
     });
 
     group.bench_function("GS with switch and lookup table", |b| {
-        b.iter(|| total_area_union(&shapes_union))
+        b.iter(|| total_area_union(black_box(&shapes_union)))
     });
 
     group.bench_function("Rust enums", |b| {
-        b.iter(|| total_area_rust(&shapes_rust_enum))
+        b.iter(|| total_area_rust(black_box(&shapes_rust_enum)))
     });
 }
 

@@ -8,6 +8,7 @@ edition = "2021"
 [dev-dependencies]
 iai = "0.1"
 criterion = "0.3.6"
+rand = "0.8.5"
 
 [[bench]]
 name = "vtbl_bench"

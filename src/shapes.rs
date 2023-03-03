@@ -1,4 +1,4 @@
-pub fn total_area_union(shape_union: &[&ShapeUnion]) -> f32 {
+pub fn total_area_union(shape_union: &[ShapeUnion]) -> f32 {
     let mut accum: f32 = 0.0;
 
     shape_union
@@ -8,7 +8,7 @@ pub fn total_area_union(shape_union: &[&ShapeUnion]) -> f32 {
     accum
 }
 
-pub fn total_area_switch(shape_union: &[&ShapeUnion]) -> f32 {
+pub fn total_area_switch(shape_union: &[ShapeUnion]) -> f32 {
     let mut accum: f32 = 0.0;
 
     shape_union
@@ -18,7 +18,7 @@ pub fn total_area_switch(shape_union: &[&ShapeUnion]) -> f32 {
     accum
 }
 
-const CTABLE: [f32; ShapeType::Count as usize] = [1.0, 1.0, 0.5, std::f32::consts::PI];
+const CTABLE: [f32; ShapeType::COUNT] = [1.0, 1.0, 0.5, std::f32::consts::PI];
 fn get_area_union(shape: &ShapeUnion) -> f32 {
     CTABLE[shape.shape_type as usize] * shape.width * shape.height
 }
@@ -33,9 +33,9 @@ fn get_area_switch(shape: &ShapeUnion) -> f32 {
     }
 }
 
-pub fn total_area_vtbl<T>(shapes: &[&T]) -> f32
+pub fn total_area_vtbl<T>(shapes: &[T]) -> f32
 where
-    T: Shape + ?Sized,
+    T: Shape,
 {
     let mut accum: f32 = 0.0;
 
@@ -44,7 +44,7 @@ where
     accum
 }
 
-pub fn total_area_rust(shapes: &[&ShapeRustEnum]) -> f32 {
+pub fn total_area_rust(shapes: &[ShapeRustEnum]) -> f32 {
     let mut accum: f32 = 0.0;
 
     shapes.iter().for_each(|shape| accum += shape.get_area());
@@ -52,7 +52,14 @@ pub fn total_area_rust(shapes: &[&ShapeRustEnum]) -> f32 {
     accum
 }
 
-#[derive(Copy, Clone)]
+pub fn total_area_separate(shapes: (&[Circle], &[Square], &[Rectangle], &[Triangle])) -> f32 {
+    total_area_vtbl(shapes.0) +
+    total_area_vtbl(shapes.1) +
+    total_area_vtbl(shapes.2) +
+    total_area_vtbl(shapes.3)
+}
+
+#[derive(Debug, Copy, Clone)]
 pub enum ShapeType {
     Square,
     Rectangle,
@@ -61,6 +68,12 @@ pub enum ShapeType {
     Count,
 }
 
+impl ShapeType {
+    const COUNT: usize = 4;
+}
+
+
+#[derive(Debug, Clone)]
 pub enum ShapeRustEnum {
     Square(Square),
     Rectangle(Rectangle),
@@ -68,6 +81,8 @@ pub enum ShapeRustEnum {
     Circle(Circle),
 }
 
+
+#[derive(Debug, Clone)]
 pub struct ShapeUnion {
     shape_type: ShapeType,
     width: f32,
@@ -99,6 +114,7 @@ impl Shape for ShapeRustEnum {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Square {
     side: f32,
 }
@@ -115,6 +131,7 @@ impl Shape for Square {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Rectangle {
     width: f32,
     height: f32,
@@ -132,6 +149,7 @@ impl Shape for Rectangle {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Triangle {
     base: f32,
     height: f32,
@@ -149,6 +167,7 @@ impl Shape for Triangle {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Circle {
     radius: f32,
 }
@@ -162,5 +181,12 @@ impl Circle {
 impl Shape for Circle {
     fn get_area(&self) -> f32 {
         std::f32::consts::PI * self.radius * self.radius
+    }
+}
+
+impl Shape for Box<dyn Shape> {
+    #[inline(always)]
+    fn get_area(&self) -> f32 {
+        (**self).get_area()
     }
 }

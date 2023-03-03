@@ -23,7 +23,6 @@ fn criterion_benchmark(c: &mut Criterion) {
     let triangle = Box::new(Triangle::new(3.0, 2.0));
     let rectangle = Box::new(Rectangle::new(4.0, 2.0));
     let mut shapes: Vec<Box<dyn Shape>> = Vec::new();
-    let mut shuffled_shapes: Vec<Box<dyn Shape>> = Vec::new();
 
     for _ in 0..4 * ARRAY_SIZE {
         match rng.gen_range(0..4) {
@@ -34,6 +33,17 @@ fn criterion_benchmark(c: &mut Criterion) {
             _ => unreachable!(),
         }
     }
+
+    let mut stride_shapes: Vec<Box<dyn Shape>> = Vec::new();
+
+    for _ in 0..ARRAY_SIZE {
+        stride_shapes.push(circle.clone());
+        stride_shapes.push(square.clone());
+        stride_shapes.push(triangle.clone());
+        stride_shapes.push(rectangle.clone());
+    }
+
+    let mut shuffled_shapes: Vec<Box<dyn Shape>> = Vec::new();
 
     for _ in 0..4 * ARRAY_SIZE {
         match rng.gen_range(0..4) {
@@ -64,6 +74,15 @@ fn criterion_benchmark(c: &mut Criterion) {
         }
     }
 
+    let mut stride_union = Vec::new();
+
+    for _ in 0..ARRAY_SIZE {
+        stride_union.push(circle_union.clone());
+        stride_union.push(square_union.clone());
+        stride_union.push(triangle_union.clone());
+        stride_union.push(rectangle_union.clone());
+    }
+
     let cc_rust = ShapeRustEnum::Circle(Circle::new(3.0));
     let ss_rust = ShapeRustEnum::Square(Square::new(4.0));
     let rr_rust = ShapeRustEnum::Rectangle(Rectangle::new(2.0, 4.0));
@@ -80,6 +99,15 @@ fn criterion_benchmark(c: &mut Criterion) {
         }
     }
 
+    let mut stride_enum = Vec::new();
+
+    for _ in 0..ARRAY_SIZE {
+        stride_enum.push(cc_rust.clone());
+        stride_enum.push(ss_rust.clone());
+        stride_enum.push(rr_rust.clone());
+        stride_enum.push(tt_rust.clone());
+    }
+
     let circles = vec![Circle::new(3.0); ARRAY_SIZE];
     let squares = vec![Square::new(4.0); ARRAY_SIZE];
     let rectangles = vec![Rectangle::new(2.0, 4.0); ARRAY_SIZE];
@@ -87,6 +115,10 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     group.bench_function("Dynamic dispatch (VTBL)", |b| {
         b.iter(|| total_area_vtbl(black_box(&shapes)))
+    });
+
+    group.bench_function("Dynamic dispatch (VTBL) strided data", |b| {
+        b.iter(|| total_area_vtbl(black_box(&stride_shapes)))
     });
 
     group.bench_function("Dynamic dispatch (VTBL) shuffled", |b| {
@@ -97,12 +129,24 @@ fn criterion_benchmark(c: &mut Criterion) {
         b.iter(|| total_area_switch(black_box(&shapes_union)))
     });
 
+    group.bench_function("GS with switch, strided data", |b| {
+        b.iter(|| total_area_switch(black_box(&stride_union)))
+    });
+
     group.bench_function("GS with switch and lookup table", |b| {
         b.iter(|| total_area_union(black_box(&shapes_union)))
     });
 
+    group.bench_function("GS with switch and lookup table, strided data", |b| {
+        b.iter(|| total_area_union(black_box(&stride_union)))
+    });
+
     group.bench_function("Rust enums", |b| {
         b.iter(|| total_area_rust(black_box(&shapes_rust_enum)))
+    });
+
+    group.bench_function("Rust enums, strided data", |b| {
+        b.iter(|| total_area_rust(black_box(&stride_enum)))
     });
 
     group.bench_function("Separate data", |b| {

@@ -1,6 +1,6 @@
 Rust implementation of the Casey's Muratori example from the ["Clean" Code, Horrible Performance article][clean-code]
 
-Although the first benchmark with VTBL is unstable (it varies from 2.8 ms to ~600 µs), the following picture looks like this:
+The following picture looks like this:
 
 GS (General Struct)
 

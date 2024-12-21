@@ -1,6 +1,7 @@
 use clean_code::shapes::{
-    total_area_rust, total_area_switch, total_area_union, total_area_vtbl, Circle, Rectangle,
-    Shape, ShapeRustEnum, ShapeUnion, Square, Triangle,
+    total_area_rust, total_area_static_promotion, total_area_switch, total_area_union,
+    total_area_vtbl, AnythingShape, Circle, Rectangle, Shape, ShapeRustEnum, ShapeUnion, Square,
+    Triangle,
 };
 use clean_code::shapes::{total_area_separate, ShapeType};
 
@@ -108,6 +109,29 @@ fn criterion_benchmark(c: &mut Criterion) {
         stride_enum.push(tt_rust.clone());
     }
 
+    let binding = Circle::new(3.0);
+    let spc_rust = AnythingShape::new(&binding);
+    let binding = Square::new(4.0);
+    let sps_rust = AnythingShape::new(&binding);
+    let binding = Rectangle::new(2.0, 4.0);
+    let spr_rust = AnythingShape::new(&binding);
+    let binding = Triangle::new(5.0, 3.0);
+    let spt_rust = AnythingShape::new(&binding);
+
+    let mut static_promotion = Vec::new();
+
+    for _ in 0..ARRAY_SIZE {
+        match rng.gen_range(0..4) {
+            0 => static_promotion.push(spc_rust.clone()),
+            1 => static_promotion.push(sps_rust.clone()),
+            2 => static_promotion.push(spt_rust.clone()),
+            3 => static_promotion.push(spr_rust.clone()),
+            _ => unreachable!(),
+        }
+    }
+
+    static_promotion.shuffle(&mut rng);
+
     let circles = vec![Circle::new(3.0); ARRAY_SIZE];
     let squares = vec![Square::new(4.0); ARRAY_SIZE];
     let rectangles = vec![Rectangle::new(2.0, 4.0); ARRAY_SIZE];
@@ -151,6 +175,10 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     group.bench_function("Separate data", |b| {
         b.iter(|| total_area_separate(black_box((&circles, &squares, &rectangles, &triangles))))
+    });
+
+    group.bench_function("Rust static promotion", |b| {
+        b.iter(|| total_area_static_promotion(black_box(&static_promotion)));
     });
 }
 

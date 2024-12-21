@@ -1,3 +1,5 @@
+use std::{marker::PhantomData, ptr::NonNull};
+
 pub fn total_area_union(shape_union: &[ShapeUnion]) -> f32 {
     let mut accum: f32 = 0.0;
 
@@ -53,10 +55,18 @@ pub fn total_area_rust(shapes: &[ShapeRustEnum]) -> f32 {
 }
 
 pub fn total_area_separate(shapes: (&[Circle], &[Square], &[Rectangle], &[Triangle])) -> f32 {
-    total_area_vtbl(shapes.0) +
-    total_area_vtbl(shapes.1) +
-    total_area_vtbl(shapes.2) +
-    total_area_vtbl(shapes.3)
+    total_area_vtbl(shapes.0)
+        + total_area_vtbl(shapes.1)
+        + total_area_vtbl(shapes.2)
+        + total_area_vtbl(shapes.3)
+}
+
+pub fn total_area_static_promotion(shapes: &[AnythingShape]) -> f32 {
+    let mut accum: f32 = 0.0;
+
+    shapes.iter().for_each(|shape| accum += shape.get_area());
+
+    accum
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -72,7 +82,6 @@ impl ShapeType {
     const COUNT: usize = 4;
 }
 
-
 #[derive(Debug, Clone)]
 pub enum ShapeRustEnum {
     Square(Square),
@@ -80,7 +89,6 @@ pub enum ShapeRustEnum {
     Triangle(Triangle),
     Circle(Circle),
 }
-
 
 #[derive(Debug, Clone)]
 pub struct ShapeUnion {
@@ -188,5 +196,34 @@ impl Shape for Box<dyn Shape> {
     #[inline(always)]
     fn get_area(&self) -> f32 {
         (**self).get_area()
+    }
+}
+
+//Static promotion
+
+struct ShapeFunctions {
+    get_area_thunk: unsafe fn(NonNull<()>) -> f32,
+}
+
+#[derive(Clone)]
+pub struct AnythingShape<'a> {
+    _p: PhantomData<&'a ()>,
+    data: NonNull<()>,
+    functions: &'static ShapeFunctions,
+}
+
+impl<'a> AnythingShape<'a> {
+    pub fn new<T: Shape>(t: &'a T) -> Self {
+        Self {
+            _p: PhantomData,
+            data: NonNull::from(t).cast(),
+            functions: &ShapeFunctions {
+                get_area_thunk: |data| unsafe { data.cast::<T>().as_ref() }.get_area(),
+            },
+        }
+    }
+
+    pub fn get_area(&self) -> f32 {
+        unsafe { (self.functions.get_area_thunk)(self.data) }
     }
 }

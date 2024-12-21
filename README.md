@@ -17,6 +17,7 @@ GS with enum field + lookup table|289 ± 1 µs|13.744x
 GS with enum field + lookup table + strided|291 ± 1 µs|13.649x
 Rust enums|2565 ± 20 µs|1.549x
 Rust enums + strided|437 ± 5 µs|9.089x
+Static promotion|564 ± 1 µs|7.042x
 Separated data|286 ± 1 µs|13.888x
 
 **It is worth noting that both trait methods and pure methods have the same performance whith the static dispatch, so I deleted one of the benchmarks**
